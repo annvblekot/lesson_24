@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tank Battle</title>
+    <style>
+        .battle-log {
+            font-family: Arial, sans-serif;
+            margin-top: 20px;
+        }
+        .battle-log p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Бой Танков</h1>
+
+<div class="battle-log" id="battle-log"></div>
+
+<script>
+    // Описание танков
+    let redTank = {
+        name: "Танк Красных",
+        health: 100,
+        armor: 50,
+    };
+
+    let blueTank = {
+        name: "Танк Синих",
+        health: 100,
+        armor: 30,
+    };
+
+    // Функция для отображения логов боя
+    function logBattle(message) {
+        const logContainer = document.getElementById('battle-log');
+        const newMessage = document.createElement('p');
+        newMessage.textContent = message;
+        logContainer.appendChild(newMessage);
+    }
+
+    // Функция обычной атаки
+    function basicAttack(attacker, defender) {
+        logBattle(`${attacker.name} использует обычную атаку на ${defender.name}`);
+        let attackPower = 40; // Сила обычной атаки
+        dealDamage(attacker, defender, attackPower);
+    }
+
+    // Функция мощной атаки, которая наносит больше урона, но игнорирует часть брони
+    function powerAttack(attacker, defender) {
+        logBattle(`${attacker.name} использует МОЩНУЮ АТАКУ на ${defender.name}`);
+        let attackPower = 70; // Сила мощной атаки
+        let armorPiercing = 20; // Мощная атака игнорирует часть брони
+        dealDamage(attacker, defender, attackPower, armorPiercing);
+    }
+
+    // Функция для нанесения урона с учетом брони
+    function dealDamage(attacker, defender, attackPower, armorPiercing = 0) {
+        let effectiveArmor = defender.armor - armorPiercing;
+        if (effectiveArmor < 0) effectiveArmor = 0; // Броня не может быть меньше 0
+
+        let damage = attackPower - effectiveArmor;
+
+        // Урон не может быть меньше нуля
+        if (damage < 0) {
+            damage = 0;
+        }
+
+        logBattle(`${defender.name} теряет ${damage} здоровья!`);
+
+        // Уменьшаем здоровье защитника
+        defender.health -= damage;
+
+        // Проверка, уничтожен ли танк
+        if (defender.health <= 0) {
+            logBattle(`${defender.name} уничтожен! БУМ 💥`);
+        } else {
+            logBattle(`${defender.name} теперь имеет ${defender.health} здоровья.`);
+        }
+    }
+
+    // --- ИГРА ---
+    // Красный танк делает обычную атаку
+    basicAttack(redTank, blueTank);
+
+    // Синий танк делает мощную атаку
+    powerAttack(blueTank, redTank);
+
+    // Красный танк делает еще одну обычную атаку
+    basicAttack(redTank, blueTank);
+
+</script>
+
+</body>
+</html>
